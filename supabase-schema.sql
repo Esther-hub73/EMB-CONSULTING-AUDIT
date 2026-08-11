@@ -18,3 +18,26 @@ create policy "Allow all access to kv_store"
   for all
   using (true)
   with check (true);
+
+-- Table des critères d'audit par département, modifiables depuis l'écran
+-- d'administration de l'application (menu "Gérer les critères").
+create table if not exists checklist_items (
+  id text primary key,
+  department_id text not null,
+  category text not null,
+  text text not null,
+  order_index integer not null default 0,
+  updated_at timestamptz default now()
+);
+
+alter table checklist_items enable row level security;
+
+create policy "Allow all access to checklist_items"
+  on checklist_items
+  for all
+  using (true)
+  with check (true);
+
+-- Note : cette table se remplit automatiquement au premier lancement de
+-- l'application (à partir de la grille par défaut intégrée au code) —
+-- aucune insertion manuelle n'est nécessaire ici.
